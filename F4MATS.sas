@@ -1,0 +1,18 @@
+%macro F4MATS(var, filename, fmtname);
+  data temp(keep=start label fmtname hlo);
+    retain hlo ' ';
+     set &filename(keep=&var) end=eof;
+     start = &var;
+     label = 'Y';
+     fmtname = "&fmtname";
+     output;
+     if eof then do;
+       start = ' ';
+       label = ' ';
+       hlo = 'O';
+       output;
+     end;
+  run;
+  proc sort data=temp nodup; by start label; run;
+  proc format cntlin = temp; run;
+%mend F4MATS;
